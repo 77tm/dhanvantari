@@ -1,0 +1,15 @@
+{
+  "name": "data",
+  "version": "1.0.0",
+  "description": "",
+  "main": "importReviews.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fast-csv": "^5.0.1",
+    "pg": "^8.11.3"
+  }
+}
