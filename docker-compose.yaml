@@ -1,0 +1,20 @@
+version: "3.8"
+services:
+  server:
+    build: ./server
+    container_name: server_c
+    ports:
+      - '4000:4000'
+  client:
+    build: ./client
+    container_name: client_c
+    ports:
+      - '3000:3000'
+    stdin_open: true
+    tty: true
+  database:
+    build: ./db
+    container_name: db_c
+    ports:
+      - '5432:5432'
+      

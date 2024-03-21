@@ -1,5 +1,6 @@
 # ignore db file
 data/db.js
+server/db.js
 
 # ignore node_modules
 data/node_modules
