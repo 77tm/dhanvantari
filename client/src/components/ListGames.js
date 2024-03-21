@@ -83,7 +83,9 @@ export default function ListGames() {
         const result = await response.json();
         console.log(result);
         response.status === 200 &&
-          message.success("Review deleted successfully");
+          message.success(
+            "Review deleted successfully, refresh to see changes"
+          );
         response.status === 400 && message.error("Error deleting review");
         console.log(response);
       } catch (err) {
@@ -120,12 +122,17 @@ export default function ListGames() {
           actions: (
             <Space>
               <Button
-                type="danger"
+                type="default"
+                danger
                 onClick={() => handleDeleteReview(review.id)}
               >
                 Delete
               </Button>
-              <Button type="primary" onClick={() => handleEditReview(review)}>
+              <Button
+                type="primary"
+                onClick={() => handleEditReview(review)}
+                style={{ backgroundColor: "#FBC107" }}
+              >
                 Edit
               </Button>
             </Space>
@@ -375,6 +382,7 @@ export default function ListGames() {
         onRow={(record) => ({
           onClick: () => handleRowClick(record),
         })}
+        style={{ cursor: "pointer" }}
       />
       {/* Pass needed props to GameCard component */}
       <GameCard

@@ -55,6 +55,9 @@ export default function GameCard({
     } catch (err) {
       console.error(err.message);
     }
+    setTimeout(() => {
+      window.location.reload(false);
+    }, 2000);
     setEditForm(false);
   };
 
@@ -80,6 +83,9 @@ export default function GameCard({
     } catch (err) {
       console.error(err.message);
     }
+    setTimeout(() => {
+      window.location.reload(false);
+    }, 2000);
     setEditForm(false);
   };
 
@@ -104,7 +110,8 @@ export default function GameCard({
       );
       console.log(response);
       form.resetFields();
-      response.status === 200 && message.success("Review edited successfully");
+      response.status === 200 &&
+        message.success("Review edited successfully, refresh to see changes");
       response.status === 400 && message.error("Error editing review");
     } catch (err) {
       console.error(err.message);
@@ -612,7 +619,7 @@ export default function GameCard({
           </Card>
           <Button
             type="primary"
-            style={{ float: "right" }}
+            style={{ float: "right", marginBottom: 10 }}
             onClick={showReviewForm}
           >
             Add review
