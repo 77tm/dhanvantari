@@ -119,6 +119,13 @@ export default function GameCard({
     setReviewForm(false);
   };
 
+  const handleFormOk = () => {
+    handleOk();
+    form.resetFields();
+    setEditForm(false);
+    setReviewForm(false);
+  };
+
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef(null);
@@ -253,7 +260,7 @@ export default function GameCard({
     // Modal to display the game card
     <Modal
       open={isModalOpen}
-      onOk={handleOk}
+      onOk={handleFormOk}
       onCancel={handleFormCancel}
       width={1200}
     >

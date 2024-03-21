@@ -23,7 +23,10 @@ export default function ListGames() {
     setIsModalOpen(true);
   };
   const handleOk = () => {
+    setselectedGameRecord({});
+    setIsEditReviewOpen(false);
     setIsModalOpen(false);
+    setSelectedReview({});
   };
 
   const handleCancel = () => {
