@@ -2,13 +2,13 @@ version: "3.8"
 services:
   server:
     build: ./server
-    image: tm77/server
+    image: tm77/dhanvantari-server
     container_name: server_c
     ports:
       - '4000:4000'
   client:
     build: ./client
-    image: tm77/client
+    image: tm77/dhanvantari-client
     container_name: client_c
     ports:
       - '3000:3000'
@@ -16,7 +16,7 @@ services:
     tty: true
   db:
     build: ./db
-    image: tm77/database
+    image: tm77/dhanvantari-database
     restart: always
     environment:
       - POSTGRES_USER=postgres
