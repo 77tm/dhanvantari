@@ -4,36 +4,14 @@ import { Button, Input, Space, Table, message } from "antd";
 import Highlighter from "react-highlight-words";
 import GameCard from "./GameCard";
 
-// will store db data
-let gameData = [];
-let reviewData = [];
-
 export default function ListGames() {
   const [games, setGames] = useState([]);
-  const [gameReviews, setGameReviews] = useState([]);
-
   const [selectedGameRecord, setselectedGameRecord] = useState({});
-  const [selectedReview, setSelectedReview] = useState({});
-
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isEditReviewOpen, setIsEditReviewOpen] = useState(false);
 
-  // antd code
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleOk = () => {
+  const handleModalClose = () => {
     setselectedGameRecord({});
-    setIsEditReviewOpen(false);
     setIsModalOpen(false);
-    setSelectedReview({});
-  };
-
-  const handleCancel = () => {
-    setselectedGameRecord({});
-    setIsEditReviewOpen(false);
-    setIsModalOpen(false);
-    setSelectedReview({});
   };
 
   // function to fetch games from db
@@ -44,8 +22,8 @@ export default function ListGames() {
       // set games state
       setGames(games);
 
-      // map through games and store in gameData
-      gameData = games.map((games) => {
+      // map through games
+      games.map((games) => {
         return {
           key: games.rank,
           rank: games.rank,
@@ -67,87 +45,9 @@ export default function ListGames() {
     }
   };
 
-  // function to delete a review
-  const handleDeleteReview = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this review?"
-    );
-    if (confirmDelete) {
-      try {
-        const response = await fetch(
-          `http://localhost:4000/delete-review/${id}`,
-          {
-            method: "DELETE",
-          }
-        );
-        const result = await response.json();
-        console.log(result);
-        response.status === 200 &&
-          message.success(
-            "Review deleted successfully, refresh to see changes"
-          );
-        response.status === 400 && message.error("Error deleting review");
-        console.log(response);
-      } catch (err) {
-        message.error("Error deleting review");
-        console.error(err.message);
-      }
-    } else {
-      message.info("Review deletion canceled");
-    }
-  };
-
-  // function to open edit review form and prefill with review data
-  const handleEditReview = async (review) => {
-    console.log(review);
-    setIsEditReviewOpen(true);
-    setSelectedReview(review);
-  };
-
-  // function to fetch reviews for a game by the game name
-  const getGameReviews = async (gameName) => {
-    reviewData = [];
-    try {
-      const response = await fetch(`http://localhost:4000/${gameName}`);
-      const reviews = await response.json();
-      // set gameReviews state
-      setGameReviews(reviews);
-      console.log(reviews);
-
-      // map through reviews, add edit, delete buttons and store in reviewData
-      reviewData = reviews.map((review) => {
-        return {
-          key: review.id,
-          review_text: review.review_text,
-          actions: (
-            <Space>
-              <Button
-                type="default"
-                danger
-                onClick={() => handleDeleteReview(review.id)}
-              >
-                Delete
-              </Button>
-              <Button
-                type="primary"
-                onClick={() => handleEditReview(review)}
-                style={{ backgroundColor: "#FBC107" }}
-              >
-                Edit
-              </Button>
-            </Space>
-          ),
-        };
-      });
-    } catch (err) {
-      console.error(err.message);
-    }
-  };
-
-  // function to open game card modal + fetch reviews for that game
+  // function to open game card modal
   const handleRowClick = (record) => {
-    showModal();
-    getGameReviews(record.name);
+    setIsModalOpen(true);
     setselectedGameRecord(record);
   };
 
@@ -288,7 +188,7 @@ export default function ListGames() {
       key: "name",
       width: "20%",
       ...getColumnSearchProps("name"),
-      sorter: (a, b) => a.name.length - b.name.length,
+      sorter: (a, b) => a.name.localeCompare(b.name),
       sortDirections: ["descend", "ascend"],
     },
     {
@@ -296,7 +196,7 @@ export default function ListGames() {
       dataIndex: "platform",
       key: "platform",
       ...getColumnSearchProps("platform"),
-      sorter: (a, b) => a.platform.length - b.platform.length,
+      sorter: (a, b) => a.platform.localeCompare(b.platform),
       sortDirections: ["descend", "ascend"],
     },
     {
@@ -312,7 +212,7 @@ export default function ListGames() {
       dataIndex: "genre",
       key: "genre",
       ...getColumnSearchProps("genre"),
-      sorter: (a, b) => a.genre.length - b.genre.length,
+      sorter: (a, b) => a.genre.localeCompare(b.genre),
       sortDirections: ["descend", "ascend"],
     },
     {
@@ -320,7 +220,7 @@ export default function ListGames() {
       dataIndex: "publisher",
       key: "publisher",
       ...getColumnSearchProps("publisher"),
-      sorter: (a, b) => a.publisher.length - b.publisher.length,
+      sorter: (a, b) => a.publisher.localeCompare(b.publisher),
       sortDirections: ["descend", "ascend"],
     },
     {
@@ -378,7 +278,7 @@ export default function ListGames() {
       <h1 style={{ textAlign: "center" }}>Game list</h1>
       <Table
         columns={columns}
-        dataSource={gameData}
+        dataSource={games}
         onRow={(record) => ({
           onClick: () => handleRowClick(record),
         })}
@@ -388,11 +288,7 @@ export default function ListGames() {
       <GameCard
         selectedGameRecord={selectedGameRecord}
         isModalOpen={isModalOpen}
-        handleOk={handleOk}
-        handleCancel={handleCancel}
-        reviewData={reviewData}
-        isEditReviewOpen={isEditReviewOpen}
-        selectedReview={selectedReview}
+        handleClose={handleModalClose}
       />
     </>
   );

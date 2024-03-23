@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import { Button, Input, Space, Table, Modal, Card, Form, message } from "antd";
@@ -7,20 +7,98 @@ export default function GameCard({
   // props
   selectedGameRecord,
   isModalOpen,
-  handleOk,
-  handleCancel,
-  reviewData,
-  isEditReviewOpen,
-  selectedReview,
+  handleClose,
 }) {
-  const data = reviewData;
-
-  const [editForm, setEditForm] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const [editGameForm, setEditGameForm] = useState(false);
   const [reviewForm, setReviewForm] = useState(false);
 
-  const showForm = () => {
-    setEditForm(true);
+  const [isEditReviewOpen, setIsEditReviewOpen] = useState(false);
+  const [selectedReview, setSelectedReview] = useState({});
+
+  useEffect(() => {
+    getReviews(selectedGameRecord.name);
+  }, [selectedGameRecord.name]);
+
+  // function to fetch reviews for a game by the game name
+  const getReviews = async (gameName) => {
+    try {
+      const response = await fetch(`http://localhost:4000/${gameName}`);
+      const reviewsData = await response.json();
+
+      // map through reviews, set reviews state
+      setReviews(
+        reviewsData.map((review) => {
+          return {
+            key: review.id,
+            review_text: review.review_text,
+            actions: (
+              <Space>
+                <Button
+                  type="default"
+                  danger
+                  onClick={() => handleDeleteReview(review.id)}
+                >
+                  Delete
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={() => handleEditReview(review)}
+                  style={{ backgroundColor: "#FBC107" }}
+                >
+                  Edit
+                </Button>
+              </Space>
+            ),
+          };
+        })
+      );
+    } catch (err) {
+      console.error(err.message);
+    }
   };
+
+  // function to delete a review
+  const handleDeleteReview = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this review?"
+    );
+    if (confirmDelete) {
+      try {
+        const response = await fetch(
+          `http://localhost:4000/delete-review/${id}`,
+          {
+            method: "DELETE",
+          }
+        );
+        const result = await response.json();
+        console.log(result);
+        response.status === 200 &&
+          message.success(
+            "Review deleted successfully, refresh to see changes"
+          );
+        response.status === 400 && message.error("Error deleting review");
+        console.log(response);
+      } catch (err) {
+        message.error("Error deleting review");
+        console.error(err.message);
+      }
+    } else {
+      message.info("Review deletion canceled");
+    }
+  };
+
+  // function to open edit review form and prefill with review data
+  const handleEditReview = async (review) => {
+    console.log(review);
+    setIsEditReviewOpen(true);
+    setSelectedReview(review);
+  };
+
+  const showForm = () => {
+    setEditGameForm(true);
+  };
+
   const showReviewForm = () => {
     setReviewForm(true);
   };
@@ -58,7 +136,7 @@ export default function GameCard({
     setTimeout(() => {
       window.location.reload(false);
     }, 2000);
-    setEditForm(false);
+    setEditGameForm(false);
   };
 
   // function to add a new review to the database
@@ -86,7 +164,7 @@ export default function GameCard({
     setTimeout(() => {
       window.location.reload(false);
     }, 2000);
-    setEditForm(false);
+    setEditGameForm(false);
   };
 
   // function to edit a review in the database
@@ -119,20 +197,12 @@ export default function GameCard({
   };
 
   // antd code
-  const handleFormCancel = () => {
-    handleCancel();
+  const handleFormClose = () => {
+    handleClose();
     form.resetFields();
-    setEditForm(false);
+    setEditGameForm(false);
     setReviewForm(false);
   };
-
-  const handleFormOk = () => {
-    handleOk();
-    form.resetFields();
-    setEditForm(false);
-    setReviewForm(false);
-  };
-
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef(null);
@@ -267,12 +337,12 @@ export default function GameCard({
     // Modal to display the game card
     <Modal
       open={isModalOpen}
-      onOk={handleFormOk}
-      onCancel={handleFormCancel}
+      onOk={handleFormClose}
+      onCancel={handleFormClose}
       width={1200}
     >
       {/* if game info edit form is open */}
-      {editForm ? (
+      {editGameForm ? (
         <div>
           <Form layout={"horizontal"} form={form} onFinish={onFinishGame}>
             <Form.Item
@@ -624,7 +694,7 @@ export default function GameCard({
           >
             Add review
           </Button>
-          <Table columns={columns} dataSource={data} />
+          <Table columns={columns} dataSource={reviews} />
         </div>
       )}
     </Modal>
