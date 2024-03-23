@@ -2,19 +2,30 @@ version: "3.8"
 services:
   server:
     build: ./server
+    image: tm77/server
     container_name: server_c
     ports:
       - '4000:4000'
   client:
     build: ./client
+    image: tm77/client
     container_name: client_c
     ports:
       - '3000:3000'
     stdin_open: true
     tty: true
-  database:
+  db:
     build: ./db
-    container_name: db_c
+    image: tm77/database
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=dhanvantari
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
     ports:
       - '5432:5432'
-      
+
+volumes:
+  pgdata:
