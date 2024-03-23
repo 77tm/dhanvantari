@@ -10,12 +10,12 @@ export default function GameCard({
   handleClose,
 }) {
   const [reviews, setReviews] = useState([]);
-  const [editGameForm, setEditGameForm] = useState(false);
-  const [reviewForm, setReviewForm] = useState(false);
-
-  const [isEditReviewOpen, setIsEditReviewOpen] = useState(false);
   const [selectedReview, setSelectedReview] = useState({});
+  const [isEditGameFormOpen, setIsEditGameFormOpen] = useState(false);
+  const [isAddReviewFormOpen, setIsAddReviewFormOpen] = useState(false);
+  const [isEditReviewFormOpen, setIsEditReviewFormOpen] = useState(false);
 
+  // fetch reviews for the selected game
   useEffect(() => {
     getReviews(selectedGameRecord.name);
   }, [selectedGameRecord.name]);
@@ -91,16 +91,16 @@ export default function GameCard({
   // function to open edit review form and prefill with review data
   const handleEditReview = async (review) => {
     console.log(review);
-    setIsEditReviewOpen(true);
+    setIsEditReviewFormOpen(true);
     setSelectedReview(review);
   };
 
   const showForm = () => {
-    setEditGameForm(true);
+    setIsEditGameFormOpen(true);
   };
 
-  const showReviewForm = () => {
-    setReviewForm(true);
+  const showisAddReviewFormOpen = () => {
+    setIsAddReviewFormOpen(true);
   };
 
   const [form] = Form.useForm();
@@ -136,7 +136,7 @@ export default function GameCard({
     setTimeout(() => {
       window.location.reload(false);
     }, 2000);
-    setEditGameForm(false);
+    setIsEditGameFormOpen(false);
   };
 
   // function to add a new review to the database
@@ -156,7 +156,8 @@ export default function GameCard({
       });
       console.log(response);
       form.resetFields();
-      response.status === 200 && message.success("Review added successfully");
+      response.status === 200 &&
+        message.success("Review added successfully, refresh to see changes");
       response.status === 400 && message.error("Error adding review");
     } catch (err) {
       console.error(err.message);
@@ -164,7 +165,7 @@ export default function GameCard({
     setTimeout(() => {
       window.location.reload(false);
     }, 2000);
-    setEditGameForm(false);
+    setIsEditGameFormOpen(false);
   };
 
   // function to edit a review in the database
@@ -200,8 +201,9 @@ export default function GameCard({
   const handleFormClose = () => {
     handleClose();
     form.resetFields();
-    setEditGameForm(false);
-    setReviewForm(false);
+    setIsEditGameFormOpen(false);
+    setIsAddReviewFormOpen(false);
+    setIsEditReviewFormOpen(false);
   };
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -340,10 +342,12 @@ export default function GameCard({
       onOk={handleFormClose}
       onCancel={handleFormClose}
       width={1200}
+      footer={null}
     >
       {/* if game info edit form is open */}
-      {editGameForm ? (
+      {isEditGameFormOpen ? (
         <div>
+          <h4>Edit Game</h4>
           <Form layout={"horizontal"} form={form} onFinish={onFinishGame}>
             <Form.Item
               label="Rank"
@@ -495,8 +499,9 @@ export default function GameCard({
           </Form>
         </div>
       ) : //   if add new review form is open
-      reviewForm ? (
+      isAddReviewFormOpen ? (
         <div>
+          <h4>Add Review</h4>
           <Form layout={"horizontal"} form={form} onFinish={onFinishReview}>
             <Form.Item
               label="App id"
@@ -572,8 +577,9 @@ export default function GameCard({
           </Form>
         </div>
       ) : //   if edit review form is open
-      isEditReviewOpen ? (
+      isEditReviewFormOpen ? (
         <div>
+          <h4>Edit Review</h4>
           <Form layout={"horizontal"} form={form} onFinish={onFinishReviewEdit}>
             <Form.Item
               label="Review id"
@@ -690,7 +696,7 @@ export default function GameCard({
           <Button
             type="primary"
             style={{ float: "right", marginBottom: 10 }}
-            onClick={showReviewForm}
+            onClick={showisAddReviewFormOpen}
           >
             Add review
           </Button>

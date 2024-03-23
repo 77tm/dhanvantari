@@ -4,11 +4,12 @@ import { Modal, Button, Form, Input, message } from "antd";
 export default function AddGame() {
   const [openFormModal, setOpenFormModal] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
+
+  // antd code
   const showModal = () => {
     setOpenFormModal(true);
   };
 
-  // antd code
   const handleOk = () => {
     setConfirmLoading(true);
     setTimeout(() => {
@@ -45,14 +46,8 @@ export default function AddGame() {
           global_sales: parseFloat(e.global_sales),
         }),
       });
-      // antd code
-      setConfirmLoading(true);
-      setTimeout(() => {
-        setOpenFormModal(false);
-        setConfirmLoading(false);
-      }, 2000);
 
-      console.log(response);
+      handleOk();
       form.resetFields();
       // display a success / error message
       response.status === 200 && message.success("Game added successfully");
@@ -83,8 +78,8 @@ export default function AddGame() {
         title="Add game"
         open={openFormModal}
         onOk={handleOk}
-        confirmLoading={confirmLoading}
         onCancel={handleCancel}
+        footer={null}
       >
         <Form layout={"horizontal"} form={form} onFinish={onFinish}>
           <Form.Item
