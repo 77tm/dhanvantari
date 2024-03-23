@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import { Button, Input, Space, Table, message } from "antd";
+import { Button, Input, Space, Table } from "antd";
 import Highlighter from "react-highlight-words";
 import GameCard from "./GameCard";
 

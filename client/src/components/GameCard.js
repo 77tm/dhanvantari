@@ -15,11 +15,6 @@ export default function GameCard({
   const [isAddReviewFormOpen, setIsAddReviewFormOpen] = useState(false);
   const [isEditReviewFormOpen, setIsEditReviewFormOpen] = useState(false);
 
-  // fetch reviews for the selected game
-  useEffect(() => {
-    getReviews(selectedGameRecord.name);
-  }, [selectedGameRecord.name]);
-
   // function to fetch reviews for a game by the game name
   const getReviews = async (gameName) => {
     try {
@@ -57,6 +52,11 @@ export default function GameCard({
       console.error(err.message);
     }
   };
+
+  // fetch reviews for the selected game
+  useEffect(() => {
+    getReviews(selectedGameRecord.name);
+  }, [selectedGameRecord.name]);
 
   // function to delete a review
   const handleDeleteReview = async (id) => {

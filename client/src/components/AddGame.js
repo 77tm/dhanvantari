@@ -3,7 +3,6 @@ import { Modal, Button, Form, Input, message } from "antd";
 
 export default function AddGame() {
   const [openFormModal, setOpenFormModal] = useState(false);
-  const [confirmLoading, setConfirmLoading] = useState(false);
 
   // antd code
   const showModal = () => {
@@ -11,11 +10,9 @@ export default function AddGame() {
   };
 
   const handleOk = () => {
-    setConfirmLoading(true);
     setTimeout(() => {
       setOpenFormModal(false);
-      setConfirmLoading(false);
-    }, 2000);
+    }, 1000);
   };
 
   const handleCancel = () => {
